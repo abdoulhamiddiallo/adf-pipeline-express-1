@@ -1,6 +1,8 @@
+<a id="top"></a>
+
 <div align="center">
 
-# ⚡ Azure Data Factory · Pipeline de recharge électrique
+# ⚡ Azure Data Factory · Guide n° 1 · Pipeline de recharge électrique
 
 **Un pipeline de production sur Azure Data Factory : découverte automatique des fichiers, ingestion parallèle par pipeline enfant, contrôle qualité Spark, quarantaine des lignes défectueuses et déclenchement par événement de stockage. Sans clé, sans mot de passe, sans planification.**
 
@@ -11,9 +13,25 @@
 ![Identité managée](https://img.shields.io/badge/Sécurité-Identité%20managée-107C10)
 ![Event Grid](https://img.shields.io/badge/Déclencheur-Event%20Grid-8661C5)
 
-**[📘 Guide pas à pas (PDF, 7 pages)](docs/Guide_ADF_Recharge_Public.pdf)** · **[📂 Données source](data/)** · **[🏗️ Architecture](#architecture)**
+**[📘 Guide n° 1 pas à pas (PDF, 7 pages)](docs/Guide_ADF_Recharge_Public_1.pdf)** · **[📂 Données source](data/)** · **[🏗️ Architecture](#architecture)** · **[🚀 Reproduire](#reproduire)**
+
+<br/>
+
+<img src="docs/images/architecture.svg" alt="Architecture complète du pipeline Azure Data Factory : déclencher, orchestrer, transformer, stocker" width="100%"/>
+
+<sub>Quatre couches, de haut en bas : ce qui déclenche, ce qui orchestre, ce qui transforme, où vivent les données. Les nombres sur les flèches sont les volumes réellement observés à l'exécution.</sub>
 
 </div>
+
+---
+
+## ⚡ En bref
+
+| 📥 Entrée | ⚙️ Traitement | 📤 Sortie |
+|:---:|:---:|:---:|
+| **3 fichiers CSV** déposés par 3 stations de recharge, puis un fichier témoin `_ready.txt` | **1 pipeline maître**, **1 pipeline enfant** lancé 3 fois en parallèle, **1 data flow Spark**, **1 déclencheur événementiel** | **6 indicateurs quotidiens** dans gold, **6 lignes défectueuses** en quarantaine, **0 ligne perdue** |
+
+> **Série Azure Data Factory, guide n° 1.** Chaque guide de la série construit un pipeline complet, reproductible de bout en bout, avec ses données, son diagramme et son guide PDF. Les suivants paraîtront dans `adf-pipeline-express-2`, `adf-pipeline-express-3`, et ainsi de suite.
 
 ---
 
@@ -195,9 +213,7 @@ flowchart LR
 
 ## 🏗️ Architecture
 
-![Architecture du pipeline](docs/images/architecture.svg)
-
-Le diagramme se lit de haut en bas, en quatre couches : **ce qui déclenche**, **ce qui orchestre**, **ce qui transforme** et **où vivent les données**. Les pastilles numérotées renvoient aux étapes du [guide](docs/Guide_ADF_Recharge_Public.pdf), et les nombres portés par les flèches sont les volumes réellement observés à l'exécution.
+Le diagramme complet ouvre cette page, [tout en haut](#top). Il se lit de haut en bas, en quatre couches : **ce qui déclenche**, **ce qui orchestre**, **ce qui transforme** et **où vivent les données**. Ses pastilles numérotées renvoient aux étapes du [guide n° 1](docs/Guide_ADF_Recharge_Public_1.pdf), et les nombres portés par les flèches sont les volumes réellement observés à l'exécution. [Ouvrir le diagramme en grand](docs/images/architecture.svg).
 
 | Ressource Azure | Nom | Rôle |
 |---|---|---|
@@ -224,11 +240,13 @@ Le diagramme se lit de haut en bas, en quatre couches : **ce qui déclenche**, *
 
 ---
 
+<a id="reproduire"></a>
+
 ## 🚀 Reproduire le projet
 
 Tout est fourni pour refaire ce pipeline dans votre propre abonnement Azure. Le compte gratuit suffit.
 
-1. Téléchargez le **[guide pas à pas (PDF, 7 pages)](docs/Guide_ADF_Recharge_Public.pdf)**. Chaque valeur à saisir y figure dans un bloc à copier, et chaque choix est expliqué.
+1. Téléchargez le **[guide n° 1 pas à pas (PDF, 7 pages)](docs/Guide_ADF_Recharge_Public_1.pdf)**. Chaque valeur à saisir y figure dans un bloc à copier, et chaque choix est expliqué.
 2. Téléchargez les quatre fichiers du dossier **[`data/`](data/)** : `charging_metz.csv`, `charging_nancy.csv`, `charging_thionville.csv` et `_ready.txt`. Ils sont aussi joints dans le PDF.
 3. Suivez les huit étapes du guide : préparer Azure, créer la connexion et les datasets, construire le pipeline enfant, le data flow et le pipeline maître, publier et vérifier, ajouter le déclencheur, puis **tout fermer** pour ne plus rien consommer.
 4. Comparez votre `station_daily.csv` au tableau de la section [Résultats clés](#resultats-cles) : les chiffres doivent être identiques.
@@ -236,7 +254,7 @@ Tout est fourni pour refaire ce pipeline dans votre propre abonnement Azure. Le 
 ### Structure du dépôt
 
 ```text
-adf-pipeline-express/
+adf-pipeline-express-1/
 ├── README.md
 ├── data/
 │   ├── charging_metz.csv          30 sessions, dont 2 défectueuses
@@ -244,7 +262,7 @@ adf-pipeline-express/
 │   ├── charging_thionville.csv    30 sessions, dont 2 défectueuses
 │   └── _ready.txt                 fichier témoin qui déclenche le pipeline
 └── docs/
-    ├── Guide_ADF_Recharge_Public.pdf
+    ├── Guide_ADF_Recharge_Public_1.pdf
     └── images/
         ├── architecture.svg
         ├── pipeline-maitre.png
